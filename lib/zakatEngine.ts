@@ -1,30 +1,34 @@
-export const NISAB = { GOLD: 87.48, SILVER: 612.36 };
-
-export function calculateZakat(vals: any, nisabType: string) {
-  const cashWealth = Number(vals.cash) + Number(vals.stocks) + Number(vals.inventory);
-  const metalWealth = (Number(vals.gold) * Number(vals.goldPrice)) + (Number(vals.silver) * Number(vals.silverPrice));
-  const totalWealth = cashWealth + metalWealth - Number(vals.debts);
+export const calculateZakat = (vals: any, nisabMode: string) => {
+  const goldPrice = vals.goldPrice || 70;
+  const silverPrice = vals.silverPrice || 0.9;
   
-  const threshold = nisabType === 'gold' ? NISAB.GOLD * vals.goldPrice : NISAB.SILVER * vals.silverPrice;
-  const isEligible = totalWealth >= threshold;
-  
-  return {
-    total: isEligible ? totalWealth * 0.025 : 0,
-    netWealth: totalWealth,
-    eligible: isEligible
-  };
-}
+  // Calculate total wealth
+  const totalWealth = 
+    (vals.cash || 0) + 
+    ((vals.gold || 0) * goldPrice) + 
+    ((vals.silver || 0) * silverPrice) + 
+    (vals.stocks || 0) + 
+    (vals.inventory || 0) - 
+    (vals.debts || 0);
 
-export function getLivestockZakat(count: number, type: string) {
-  if (type === 'sheep') {
-    if (count < 40) return "None";
-    if (count <= 120) return "1 Sheep";
-    if (count <= 200) return "2 Sheep";
-    return `${Math.floor(count / 100)} Sheep`;
+  // Nisab thresholds (Standard: 87.48g Gold / 612.36g Silver)
+  const nisabGold = 87.48 * goldPrice;
+  const nisabSilver = 612.36 * silverPrice;
+  const currentNisab = nisabMode === 'gold' ? nisabGold : nisabSilver;
+
+  if (totalWealth >= currentNisab) {
+    return {
+      total: totalWealth * 0.025,
+      isEligible: true,
+      wealth: totalWealth
+    };
   }
-  if (type === 'cow') {
-    if (count < 30) return "None";
-    return count < 40 ? "1 Yearling Calf" : "1 Two-year-old Cow";
-  }
-  return "Contact local Imam for specific Camel ratios";
-}
+
+  return { total: 0, isEligible: false, wealth: totalWealth };
+};
+
+export const getLivestockZakat = (count: number) => {
+  if (count < 40) return "No Zakat due";
+  if (count < 121) return "1 Sheep/Goat";
+  return "2 Sheep/Goats";
+};
