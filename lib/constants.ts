@@ -1,45 +1,12 @@
-export const LANGUAGES = [
-  { code: 'en', name: 'English' },
-  { code: 'ar', name: 'العربية' },
-  { code: 'ur', name: 'اردو' },
-  { code: 'id', name: 'Bahasa Indonesia' },
-  { code: 'tr', name: 'Türkçe' },
-  { code: 'ms', name: 'Bahasa Melayu' },
-  { code: 'bn', name: 'বাংলা' },
-  { code: 'fa', name: 'فارسی' },
-  { code: 'fr', name: 'Français' },
-  { code: 'es', name: 'Español' },
-  { code: 'de', name: 'Deutsch' },
-  { code: 'hi', name: 'हिन्दी' },
-  { code: 'ru', name: 'Русский' },
-  { code: 'zh', name: '中文' },
-  { code: 'sw', name: 'Kiswahili' },
-  { code: 'ha', name: 'Hausa' },
-  { code: 'pt', name: 'Português' },
-  { code: 'nl', name: 'Nederlands' },
-  { code: 'it', name: 'Italiano' },
-  { code: 'ta', name: 'தமிழ்' }
-];
-
 export const CURRENCIES = [
   { code: 'USD', symbol: '$', name: 'US Dollar' },
   { code: 'SAR', symbol: 'SR', name: 'Saudi Riyal' },
-  { code: 'AED', symbol: 'DH', name: 'UAE Dirham' },
   { code: 'PKR', symbol: 'Rs', name: 'Pakistani Rupee' },
-  { code: 'INR', symbol: '₹', name: 'Indian Rupee' },
-  { code: 'GBP', symbol: '£', name: 'British Pound' },
-  { code: 'EUR', symbol: '€', name: 'Euro' },
-  { code: 'IDR', symbol: 'Rp', name: 'Indonesian Rupiah' },
-  { code: 'MYR', symbol: 'RM', name: 'Malaysian Ringgit' },
-  { code: 'TRY', symbol: '₺', name: 'Turkish Lira' },
-  { code: 'BDT', symbol: '৳', name: 'Bangladeshi Taka' },
-  { code: 'KWD', symbol: 'KD', name: 'Kuwaiti Dinar' },
-  { code: 'QAR', symbol: 'QR', name: 'Qatari Riyal' },
-  { code: 'EGP', symbol: 'E£', name: 'Egyptian Pound' },
-  { code: 'CAD', symbol: 'C$', name: 'Canadian Dollar' },
-  { code: 'AUD', symbol: 'A$', name: 'Australian Dollar' },
-  { code: 'JPY', symbol: '¥', name: 'Japanese Yen' },
-  { code: 'NGN', symbol: '₦', name: 'Nigerian Naira' },
-  { code: 'ZAR', symbol: 'R', name: 'South African Rand' },
-  { code: 'CHF', symbol: 'Fr', name: 'Swiss Franc' }
+  { code: 'GBP', symbol: '£', name: 'British Pound' }
+];
+
+export const LANGUAGES = [
+  { code: 'en', name: 'English' },
+  { code: 'ar', name: 'العربية' },
+  { code: 'ur', name: 'اردو' }
 ];
