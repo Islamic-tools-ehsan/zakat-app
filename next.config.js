@@ -8,10 +8,8 @@ const withPWA = require('next-pwa')({
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  output: 'export',
-  images: {
-    unoptimized: true
-  }
+  // We REMOVED output: 'export'
+  // We REMOVED basePath and assetPrefix
 };
 
 module.exports = withPWA(nextConfig);
