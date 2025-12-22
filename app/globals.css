@@ -2,7 +2,58 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --emerald-primary: 16, 185, 129;
+  --slate-dark: 15, 23, 42;
+}
+
+/* 1. Modern Background & Typography */
 body {
-  background: #f8fafc;
+  background: linear-gradient(135deg, #f8fafc 0%, #ecfdf5 100%);
   color: #1e293b;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 2. Glassmorphism Utility */
+@layer components {
+  .glass-card {
+    @apply bg-white/70 backdrop-blur-2xl border border-white/40 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)];
+  }
+}
+
+/* 3. Smooth Transitions for Language Switching */
+* {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 4. Custom Modern Scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(16, 185, 129, 0.2);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(16, 185, 129, 0.5);
+}
+
+/* 5. Fix for RTL Layout Shifting */
+[dir="rtl"] .ml-auto {
+  margin-right: auto;
+  margin-left: 0;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
