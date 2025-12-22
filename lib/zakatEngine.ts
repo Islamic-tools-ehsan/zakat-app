@@ -1,33 +1,41 @@
-export function calculateZakat(vals: any, nisabMode: string) {
-  const goldValue = (vals.gold || 0) * (vals.goldPrice || 0);
-  const silverValue = (vals.silver || 0) * (vals.silverPrice || 0);
-  const totalWealth = (vals.cash || 0) + goldValue + silverValue + (vals.stocks || 0) + (vals.inventory || 0) - (vals.debts || 0);
+// lib/zakatEngine.ts
+
+/**
+ * Modernized Zakat Engine
+ * Updated to handle structured state objects from the UI
+ */
+
+export const calculateZakat = (vals: any, nisabType: 'gold' | 'silver' = 'silver') => {
+  // Extract values with defaults to prevent NaN errors
+  const cash = Number(vals.cash) || 0;
+  const gold = (Number(vals.gold) || 0) * (Number(vals.goldPrice) || 70);
+  const silver = (Number(vals.silver) || 0) * (Number(vals.silverPrice) || 0.9);
+  const stocks = Number(vals.stocks) || 0;
+  const debts = Number(vals.debts) || 0;
+
+  const totalWealth = cash + gold + silver + stocks - debts;
   
-  // Silver Nisab is the most authentic default for modern times
-  const nisab = 612.36 * (vals.silverPrice || 0.90); 
-  const isEligible = totalWealth >= nisab;
-  
+  // Standard Zakat rate is 2.5%
+  const totalDue = totalWealth > 0 ? totalWealth * 0.025 : 0;
+
   return {
-    total: isEligible ? totalWealth * 0.025 : 0,
-    isEligible,
-    nisabLimit: nisab
+    total: totalDue,
+    wealthBreakdown: { cash, gold, silver, stocks }
   };
-}
+};
 
-export function getLivestockZakat(vals: any) {
-  const due = [];
-  const totalSmall = (vals.sheep || 0) + (vals.goats || 0);
+export const getLivestockZakat = (vals: any) => {
+  const results: { animal: string; due: string }[] = [];
+  
+  // Sheep/Goat Logic
+  const sheep = Number(vals.sheep) || 0;
+  if (sheep >= 40 && sheep < 121) results.push({ animal: "Sheep/Goats", due: "1 Sheep" });
+  else if (sheep >= 121 && sheep < 201) results.push({ animal: "Sheep/Goats", due: "2 Sheep" });
+  
+  // Cow/Buffalo Logic
+  const cows = Number(vals.cows) || 0;
+  if (cows >= 30 && cows < 40) results.push({ animal: "Cows/Buffalo", due: "1 Tabi' (1yr old)" });
+  else if (cows >= 40) results.push({ animal: "Cows/Buffalo", due: "1 Musinnah (2yr old)" });
 
-  if (totalSmall >= 40) {
-    if (totalSmall <= 120) due.push({ animal: "Sheep/Goat", due: "1 Sheep" });
-    else if (totalSmall <= 200) due.push({ animal: "Sheep/Goat", due: "2 Sheep" });
-    else due.push({ animal: "Sheep/Goat", due: "3 Sheep" });
-  }
-
-  if ((vals.cows || 0) >= 30) {
-    if (vals.cows <= 39) due.push({ animal: "Cow/Buffalo", due: "1 Tabi' (1yr old)" });
-    else due.push({ animal: "Cow/Buffalo", due: "1 Musinnah (2yr old)" });
-  }
-
-  return due;
-}
+  return results;
+};
