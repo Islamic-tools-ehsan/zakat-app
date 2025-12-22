@@ -1,15 +1,18 @@
 /** @type {import('next').NextConfig} */
+const withPWA = require('next-pwa')({
+  dest: 'public',
+  register: true,
+  skipWaiting: true,
+  disable: process.env.NODE_ENV === 'development'
+});
+
 const nextConfig = {
-  // Disables strict type checking during the build phase
   typescript: {
     ignoreBuildErrors: true,
   },
-  // Disables ESLint warnings from blocking the production build
   eslint: {
     ignoreDuringBuilds: true,
   },
-  // Recommended for modern Next.js apps
-  reactStrictMode: true,
-}
+};
 
-module.exports = nextConfig
+module.exports = withPWA(nextConfig);
