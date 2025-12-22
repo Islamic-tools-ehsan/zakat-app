@@ -1,48 +1,50 @@
-# zakat-app
 # 🌙 Modern Islamic Zakat Calculator
+### *Fulfilling your pillar of Islam with precision and ease.*
 
-A high-performance, **mobile-first web application** designed to provide authentic and precise Zakat calculations for Muslims worldwide. Built with a focus on **User Experience (UX)**, **Accessibility**, and **Multilingual support**.
-
-![Next.js](https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.0-38B2AC?style=for-the-badge&logo=tailwind-css)
-![Framer Motion](https://img.shields.io/badge/Framer_Motion-11-ff0055?style=for-the-badge&logo=framer)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=for-the-badge&logo=typescript)
+This application is a dedicated digital tool designed to help Muslims accurately calculate their Zakat—one of the five pillars of Islam. By combining authentic scriptural guidance with modern financial tools, it ensures your charity is calculated correctly according to the Sunnah.
 
 ---
 
-## ✨ Features
+## 🚀 How This App Helps You
 
-- **💎 Glassmorphic UI:** A modern, "Apple-style" interface featuring soft blurs, deep shadows, and tactile interactions.
-- **🌍 Multilingual Engine:** Instant translation support for **English, Arabic, Urdu, Turkish, Indonesian, and French**.
-- **🔄 Real-time RTL Support:** Automatic layout switching (Right-to-Left) for Arabic and Urdu scripts.
-- **⚖️ Dual Calculation Modes:** - **Wealth:** Cash, Gold, Silver, and Stocks.
-  - **Livestock:** Precise calculation for Sheep, Goats, Cows, and Buffalo based on authentic Hadith.
-- **📖 Scriptural Evidence:** Integrated "Evidence" popups providing Sahih Hadith and Quranic references for every calculation.
-- **📊 Interactive Visualization:** Dynamic data breakdown using `Chart.js` for better financial insights.
+Calculating Zakat can often feel complex due to fluctuating gold prices, different types of assets, and specific livestock rules. This app simplifies that process into three easy steps:
+
+### 1. Unified Wealth Assessment
+Instead of manually calculating different assets, the app provides a streamlined interface for:
+- **Cash & Savings:** Input your liquid bank balance and physical cash.
+- **Precious Metals:** Input Gold and Silver in grams; the app handles the valuation.
+- **Investment Assets:** Account for stocks and business inventory in one place.
+- **Debt Deduction:** Automatically subtracts your immediate liabilities to find your true taxable wealth.
+
+### 2. Precise Livestock Calculation
+Livestock Zakat has specific "Nisab" (threshold) brackets that are hard to memorize. 
+- Simply enter the count of your **Sheep, Goats, Cows, or Buffalo**.
+- The app instantly tells you exactly how many animals are due (e.g., "1 Tabi'" or "2 Sheep") based on authentic Hadith brackets.
+
+### 3. Instant Scriptural Verification
+To give you peace of mind and spiritual confidence, the app doesn't just show numbers.
+- **Evidence Popups:** For every calculation, you can click "View Evidence" to see the specific Quranic verse or Sahih Hadith that justifies that rule.
+- **Educational:** It teaches the user *why* they are paying a certain amount, connecting the financial act to the Divine command.
 
 ---
 
-## 🛠️ Tech Stack
+## 🌍 Why It Is Essential for Muslims
 
-- **Framework:** [Next.js 14](https://nextjs.org/) (App Router)
-- **Styling:** [Tailwind CSS](https://tailwindcss.com/)
-- **Animations:** [Framer Motion](https://www.framer.com/motion/)
-- **Icons:** [Lucide React](https://lucide.dev/)
-- **Charts:** [Chart.js](https://www.chartjs.org/) & [react-chartjs-2](https://react-chartjs-2.js.org/)
-- **Deployment:** [Vercel](https://vercel.com/)
+- **Accuracy for the Ummah:** Avoids the risk of underpaying (which leaves the obligation unfulfilled) or overpaying (though a blessing, it's better to know the exact right amount).
+- **Multi-Lingual Accessibility:** Available in **Arabic, Urdu, English, Turkish, Indonesian, and French**, making it accessible to Muslims from different cultural backgrounds in their native tongue.
+- **Mobile-First Design:** Designed to be used on-the-go. Whether you are at the bank, at your farm, or at home, you can calculate your Zakat in seconds.
+- **Privacy Focused:** Your financial data is processed locally on your device. We do not store your wealth details, ensuring your financial privacy (Amanah).
 
 ---
 
-## 🚀 Getting Started
+## 🛠 Features at a Glance
 
-### Prerequisites
+- **Global Currency Support:** Calculate in USD, PKR, SAR, TRY, or EUR.
+- **Nisab Protection:** The app automatically detects if your wealth is below the Nisab threshold and informs you if Zakat is not yet due.
+- **Visual Breakdown:** A dynamic chart shows you exactly which part of your wealth (Gold vs. Cash vs. Stocks) is contributing most to your Zakat.
 
-- Node.js 18.x or later
-- npm / yarn / pnpm
+---
 
-### Installation
+**"Take, [O, Muhammad], from their wealth a charity by which you purify them and cause them increase..." (Quran 9:103)**
 
-1. **Clone the repository**
-   ```bash
-   git clone [https://github.com/your-username/zakat-app.git](https://github.com/your-username/zakat-app.git)
-   cd zakat-app
+*Developed to serve the Ummah and simplify the path of giving.*
