@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { calculateZakat, getLivestockZakat } from '@/lib/zakatEngine';
 import { LANGUAGES, CURRENCIES } from '@/lib/constants';
-import { Book, Info, X, Coins, Beef } from 'lucide-react';
+import { Book, Info, X, Coins, Beef, Globe, Wallet } from 'lucide-react';
 import references from '../references.json';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
@@ -10,153 +10,154 @@ import { Pie } from 'react-chartjs-2';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
+// 1. MULTI-LANGUAGE DICTIONARY (All languages from your screenshot)
+const translations: any = {
+  en: { title: "Islamic Zakat", subtitle: "Authentic & Precise", wealth: "Wealth", livestock: "Livestock", cashPlace: "Cash on Hand / Bank", goldLabel: "GOLD (GRAMS)", silverLabel: "SILVER (GRAMS)", totalDue: "Total Zakat Due", evidence: "View Evidence", sheepLabel: "Sheep / Goats", cowLabel: "Cows / Buffalo", dueHeader: "Livestock Zakat Due:", noZakat: "Below Nisab limit", hadithBtn: "View Hadith", evidenceTitle: "Divine Evidence" },
+  ur: { title: "اسلامی زکوۃ", subtitle: "مستند اور درست", wealth: "دولت", livestock: "مویشی", cashPlace: "نقدی رقم / بینک", goldLabel: "سونا (گرام)", silverLabel: "چاندی (گرام)", totalDue: "کل واجب الادا زکوۃ", evidence: "ثبوت ملاحظہ کریں", sheepLabel: "بھیڑ / بکریاں", cowLabel: "گائے / بھینس", dueHeader: "واجب الادا زکوۃ:", noZakat: "نصاب سے کم", hadithBtn: "حدیث دیکھیں", evidenceTitle: "شرعی دلیل" },
+  ar: { title: "الزكاة الإسلامية", subtitle: "أصيلة ودقيقة", wealth: "المال", livestock: "الأنعام", cashPlace: "نقداً / في البنك", goldLabel: "الذهب (غرام)", silverLabel: "الفضة (غرام)", totalDue: "إجمالي الزكاة المستحقة", evidence: "عرض الدليل", sheepLabel: "الغنم / الماعز", cowLabel: "البقر / الجاموس", dueHeader: "زكاة الأنعام المستحقة:", noZakat: "أقل من النصاب", hadithBtn: "عرض الحديث", evidenceTitle: "الدليل الشرعي" },
+  tr: { title: "İslami Zekat", subtitle: "Otantik ve Hassas", wealth: "Varlıklar", livestock: "Hayvancılık", cashPlace: "Nakit / Banka", goldLabel: "ALTIN (GRAM)", silverLabel: "GÜMÜŞ (GRAM)", totalDue: "Toplam Zekat Borcu", evidence: "Kanıtı Görüntüle", sheepLabel: "Koyun / Keçi", cowLabel: "İnek / Manda", dueHeader: "Hayvancılık Zekatı:", noZakat: "Nisab sınırının altında", hadithBtn: "Hadisi Görüntüle", evidenceTitle: "İlahi Kanıt" },
+  id: { title: "Zakat Islami", subtitle: "Otentik & Presisi", wealth: "Harta", livestock: "Peternakan", cashPlace: "Uang Tunai / Bank", goldLabel: "EMAS (GRAM)", silverLabel: "PERAK (GRAM)", totalDue: "Total Zakat", evidence: "Lihat Dalil", sheepLabel: "Domba / Kambing", cowLabel: "Sapi / Kerbau", dueHeader: "Zakat Ternak:", noZakat: "Di bawah batas Nisab", hadithBtn: "Lihat Hadist", evidenceTitle: "Dalil Ilahi" },
+  fr: { title: "Zakat Islamique", subtitle: "Authentique & Précis", wealth: "Richesse", livestock: "Bétail", cashPlace: "Espèces / Banque", goldLabel: "OR (GRAMMES)", silverLabel: "ARGENT (GRAMMES)", totalDue: "Total Zakat Dû", evidence: "Voir les Preuves", sheepLabel: "Moutons / Chèvres", cowLabel: "Vaches / Buffles", dueHeader: "Zakat sur le Bétail:", noZakat: "Sous le seuil du Nisab", hadithBtn: "Voir le Hadith", evidenceTitle: "Preuve Divine" }
+};
+
 export default function ZakatApp() {
-  const [activeTab, setActiveTab] = useState('wealth'); // 'wealth' or 'livestock'
-  
-  // Using 'any' here to prevent the strict Type Errors during Vercel build
-  const [vals, setVals] = useState<any>({ 
-    cash: 0, gold: 0, silver: 0, stocks: 0, 
-    inventory: 0, debts: 0, goldPrice: 70, 
-    silverPrice: 0.90, sheep: 0, goats: 0, cows: 0, camels: 0
-  });
-  
+  const [activeTab, setActiveTab] = useState('wealth');
   const [activeLang, setActiveLang] = useState('en');
   const [activeCurrency, setActiveCurrency] = useState('USD');
   const [proofData, setProofData] = useState<any>(null);
+  const [vals, setVals] = useState<any>({ cash: 0, gold: 0, silver: 0, goldPrice: 70, silverPrice: 0.90, sheep: 0, cows: 0 });
+
+  const t = translations[activeLang] || translations.en;
+  const isRTL = activeLang === 'ur' || activeLang === 'ar';
   
-  // Pass 'vals' as any to match the updated engine signature
   const res = calculateZakat(vals as any, 'silver');
   const livestockRes = getLivestockZakat(vals as any);
   const selectedCurrency = CURRENCIES.find(c => c.code === activeCurrency) || CURRENCIES[0];
 
   const chartData = {
-    labels: ['Cash', 'Gold', 'Silver', 'Stocks'],
+    labels: [t.cashPlace, 'Gold', 'Silver'],
     datasets: [{
-      data: [
-        vals.cash || 0, 
-        (vals.gold || 0) * (vals.goldPrice || 0), 
-        (vals.silver || 0) * (vals.silverPrice || 0), 
-        vals.stocks || 0
-      ],
-      backgroundColor: ['#10b981', '#fbbf24', '#94a3b8', '#3b82f6'],
-      borderWidth: 0,
+      data: [vals.cash || 0, (vals.gold || 0) * 70, (vals.silver || 0) * 0.9],
+      backgroundColor: ['#10b981', '#fbbf24', '#94a3b8'],
+      hoverOffset: 4, borderRadius: 8
     }]
   };
 
   return (
-    <div className="max-w-md mx-auto min-h-screen bg-slate-50 shadow-2xl flex flex-col font-sans relative text-slate-900">
+    <div className={`max-w-md mx-auto min-h-screen bg-slate-50 flex flex-col relative text-slate-900 ${isRTL ? 'text-right' : 'text-left'}`} dir={isRTL ? 'rtl' : 'ltr'}>
+      
+      {/* HEADER */}
+      <header className="p-4">
+        <div className="bg-emerald-700 text-white p-6 rounded-[2rem] shadow-xl">
+          <div className="flex justify-between items-center mb-6">
+            <div>
+              <h1 className="text-2xl font-black">{t.title}</h1>
+              <p className="text-emerald-200 text-xs">{t.subtitle}</p>
+            </div>
+            <div className="flex gap-2" dir="ltr">
+              <select value={activeLang} onChange={(e) => setActiveLang(e.target.value)} className="bg-emerald-800 p-2 rounded-xl border border-emerald-600 outline-none text-[10px] font-bold">
+                {LANGUAGES.map(l => <option key={l.code} value={l.code}>{l.flag} {l.name}</option>)}
+              </select>
+              <select value={activeCurrency} onChange={(e) => setActiveCurrency(e.target.value)} className="bg-emerald-800 p-2 rounded-xl border border-emerald-600 outline-none text-[10px] font-bold">
+                {CURRENCIES.map(c => <option key={c.code} value={c.code}>{c.code}</option>)}
+              </select>
+            </div>
+          </div>
+
+          <div className="flex bg-emerald-900/40 p-1.5 rounded-2xl">
+            <button onClick={() => setActiveTab('wealth')} className={`flex-1 py-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all ${activeTab === 'wealth' ? 'bg-white text-emerald-700' : 'text-emerald-100'}`}>
+              <Wallet size={16}/> {t.wealth}
+            </button>
+            <button onClick={() => setActiveTab('livestock')} className={`flex-1 py-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all ${activeTab === 'livestock' ? 'bg-white text-emerald-700' : 'text-emerald-100'}`}>
+              <Beef size={16}/> {t.livestock}
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* MAIN CONTENT */}
+      <main className="p-6 space-y-8 flex-1">
+        <AnimatePresence mode="wait">
+          {activeTab === 'wealth' ? (
+            <motion.section key="wealth" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-6">
+              <div className="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-100 space-y-4">
+                <div className="relative">
+                  <span className={`absolute ${isRTL ? 'right-4' : 'left-4'} top-4 text-emerald-600 font-black`}>{selectedCurrency.symbol}</span>
+                  <input type="number" placeholder={t.cashPlace} className={`w-full bg-slate-50 p-4 ${isRTL ? 'pr-10' : 'pl-10'} rounded-2xl outline-none focus:ring-2 focus:ring-emerald-500/20`} onChange={e => setVals({...vals, cash: +e.target.value})} />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black text-slate-400 px-1">{t.goldLabel}</label>
+                    <input type="number" placeholder="0" className="w-full bg-slate-50 p-4 rounded-2xl outline-none" onChange={e => setVals({...vals, gold: +e.target.value})} />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black text-slate-400 px-1">{t.silverLabel}</label>
+                    <input type="number" placeholder="0" className="w-full bg-slate-50 p-4 rounded-2xl outline-none" onChange={e => setVals({...vals, silver: +e.target.value})} />
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-emerald-900 rounded-[2.5rem] p-8 shadow-2xl flex flex-col items-center text-center">
+                <div className="w-32 h-32 mb-6">
+                  <Pie data={chartData} options={{ plugins: { legend: { display: false } }, cutout: '70%' }} />
+                </div>
+                <p className="text-emerald-400 text-[10px] tracking-widest uppercase font-black mb-1">{t.totalDue}</p>
+                <h2 className="text-4xl font-black text-white">
+                  {selectedCurrency.symbol}{res.total.toLocaleString(undefined, {minimumFractionDigits: 0})}
+                </h2>
+                <button onClick={() => setProofData(references.residuary)} className="mt-6 flex items-center gap-2 text-emerald-300 text-[10px] font-bold underline decoration-emerald-500/50">
+                  <Info size={14}/> {t.evidence}
+                </button>
+              </div>
+            </motion.section>
+          ) : (
+            <motion.section key="livestock" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
+              <div className="bg-white rounded-[2rem] p-6 border border-slate-100 grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-[10px] font-black text-slate-400 px-1">{t.sheepLabel}</label>
+                  <input type="number" className="w-full bg-slate-50 p-4 rounded-2xl outline-none" placeholder="0" onChange={e => setVals({...vals, sheep: +e.target.value})} />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-black text-slate-400 px-1">{t.cowLabel}</label>
+                  <input type="number" className="w-full bg-slate-50 p-4 rounded-2xl outline-none" placeholder="0" onChange={e => setVals({...vals, cows: +e.target.value})} />
+                </div>
+              </div>
+
+              <div className="bg-white rounded-[2.5rem] p-8 shadow-xl border border-slate-50">
+                 <h3 className="font-black text-emerald-900 text-lg flex items-center gap-3 mb-6"><Beef size={24}/> {t.dueHeader}</h3>
+                 <div className="space-y-3">
+                   {livestockRes.map((item: any, idx: number) => (
+                     <div key={idx} className="flex justify-between items-center bg-slate-50 p-5 rounded-2xl border border-slate-100">
+                       <span className="font-bold text-slate-600">{item.animal}</span>
+                       <span className="text-emerald-700 font-black bg-emerald-100 px-4 py-2 rounded-xl text-sm">{item.due}</span>
+                     </div>
+                   ))}
+                   {livestockRes.length === 0 && <p className="text-center py-10 text-slate-400 font-bold">{t.noZakat}</p>}
+                 </div>
+                 <button onClick={() => setProofData(references.livestock)} className="w-full mt-6 text-[10px] font-black text-slate-400 flex justify-center items-center gap-2">
+                   <Info size={16}/> {t.hadithBtn}
+                 </button>
+              </div>
+            </motion.section>
+          )}
+        </AnimatePresence>
+      </main>
+
       {/* EVIDENCE POPUP */}
       <AnimatePresence>
         {proofData && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/50 backdrop-blur-sm">
-            <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} className="bg-white rounded-3xl p-6 shadow-2xl w-full max-w-sm border-t-4 border-emerald-600">
-              <div className="flex justify-between mb-4">
-                <h3 className="text-emerald-800 font-bold flex items-center gap-2"><Book size={18}/> Evidence</h3>
-                <button onClick={() => setProofData(null)} className="text-slate-400 hover:text-emerald-600 transition-colors"><X size={20}/></button>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-md">
+            <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} className="bg-white rounded-[2.5rem] p-8 shadow-2xl w-full max-w-sm">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-emerald-800 text-xl font-bold flex items-center gap-2"><Book size={22}/> {t.evidenceTitle}</h3>
+                <button onClick={() => setProofData(null)} className="p-2 hover:bg-slate-100 rounded-full"><X size={24}/></button>
               </div>
-              <p className="text-slate-700 italic text-sm mb-4">"{proofData?.verse_en}"</p>
-              <div className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full inline-block">Source: {proofData?.source}</div>
+              <p className="text-slate-700 italic text-lg mb-6 leading-relaxed">"{activeLang === 'ur' || activeLang === 'ar' ? (activeLang === 'ur' ? proofData?.verse_ur : proofData?.verse_ar) : proofData?.verse_en}"</p>
+              <div className="bg-emerald-600 text-white px-4 py-2 rounded-xl text-xs font-bold inline-block">{proofData?.source}</div>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* HEADER WITH DROP-DOWNS */}
-      <header className="bg-emerald-700 text-white p-6 rounded-b-3xl shadow-lg">
-        <div className="flex justify-between items-start mb-4">
-          <div>
-            <h1 className="text-xl font-bold">Islamic Zakat</h1>
-            <p className="text-emerald-100 text-[10px] italic font-medium">Authentic & Precise</p>
-          </div>
-          <div className="flex gap-2">
-            <select value={activeLang} onChange={(e) => setActiveLang(e.target.value)} className="bg-emerald-800 text-[10px] p-1.5 rounded-lg border border-emerald-600 outline-none text-white">
-              {LANGUAGES.map(l => <option key={l.code} value={l.code}>{l.flag} {l.name}</option>)}
-            </select>
-            <select value={activeCurrency} onChange={(e) => setActiveCurrency(e.target.value)} className="bg-emerald-800 text-[10px] p-1.5 rounded-lg border border-emerald-600 outline-none text-white">
-              {CURRENCIES.map(c => <option key={c.code} value={c.code}>{c.code}</option>)}
-            </select>
-          </div>
-        </div>
-
-        {/* TAB SWITCHER */}
-        <div className="flex bg-emerald-800/50 p-1 rounded-xl">
-          <button onClick={() => setActiveTab('wealth')} className={`flex-1 py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-2 transition-all ${activeTab === 'wealth' ? 'bg-white text-emerald-700 shadow-md' : 'text-emerald-100 hover:bg-emerald-800/30'}`}>
-            <Coins size={14}/> Wealth
-          </button>
-          <button onClick={() => setActiveTab('livestock')} className={`flex-1 py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-2 transition-all ${activeTab === 'livestock' ? 'bg-white text-emerald-700 shadow-md' : 'text-emerald-100 hover:bg-emerald-800/30'}`}>
-            <Beef size={14}/> Livestock
-          </button>
-        </div>
-      </header>
-
-      <main className="p-6 flex-1 space-y-6">
-        {activeTab === 'wealth' ? (
-          <section className="space-y-4">
-            <div className="relative">
-              <span className="absolute left-3 top-3 text-slate-400 font-bold">{selectedCurrency.symbol}</span>
-              <input type="number" placeholder="Cash on Hand / Bank" className="w-full border-slate-200 border p-3 pl-8 rounded-xl outline-none text-black focus:border-emerald-500 transition-all" onChange={e => setVals({...vals, cash: +e.target.value})} />
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-slate-400 ml-2">GOLD (GRAMS)</label>
-                <input type="number" placeholder="0" className="w-full border-slate-200 border p-3 rounded-xl text-black outline-none focus:border-emerald-500 transition-all" onChange={e => setVals({...vals, gold: +e.target.value})} />
-              </div>
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-slate-400 ml-2">SILVER (GRAMS)</label>
-                <input type="number" placeholder="0" className="w-full border-slate-200 border p-3 rounded-xl text-black outline-none focus:border-emerald-500 transition-all" onChange={e => setVals({...vals, silver: +e.target.value})} />
-              </div>
-            </div>
-
-            {/* Wealth Results Card */}
-            <motion.div key="wealth-res" initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="bg-emerald-900 text-white p-6 rounded-3xl shadow-xl flex flex-col items-center">
-              <div className="w-24 h-24 mb-4">
-                <Pie data={chartData} options={{ plugins: { legend: { display: false } } }} />
-              </div>
-              <p className="text-emerald-300 text-[10px] tracking-widest uppercase font-bold">Total Zakat Due</p>
-              <p className="text-4xl font-black mt-1">
-                {selectedCurrency.symbol}{res.total.toLocaleString(undefined, {minimumFractionDigits: 2})}
-              </p>
-              <button onClick={() => setProofData(references.residuary)} className="mt-4 text-[10px] text-emerald-400 underline flex items-center gap-1 hover:text-emerald-300 transition-colors">
-                <Info size={12}/> Why this amount? View Evidence
-              </button>
-            </motion.div>
-          </section>
-        ) : (
-          <section className="space-y-4">
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-slate-500 ml-2 uppercase">Sheep / Goats</label>
-                <input type="number" className="w-full border-slate-200 border p-3 rounded-xl text-black outline-none focus:border-emerald-500 transition-all" placeholder="Count" onChange={e => setVals({...vals, sheep: +e.target.value})} />
-              </div>
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-slate-500 ml-2 uppercase">Cows / Buffalo</label>
-                <input type="number" className="w-full border-slate-200 border p-3 rounded-xl text-black outline-none focus:border-emerald-500 transition-all" placeholder="Count" onChange={e => setVals({...vals, cows: +e.target.value})} />
-              </div>
-            </div>
-
-            {/* Livestock Results Card */}
-            <div className="bg-white border-2 border-emerald-50 p-6 rounded-3xl shadow-sm space-y-4">
-               <h3 className="font-bold text-emerald-800 text-sm flex items-center gap-2"><Beef size={16}/> Livestock Zakat Due:</h3>
-               <div className="space-y-2">
-                 {livestockRes.map((item: any, idx: number) => (
-                   <div key={idx} className="flex justify-between items-center bg-emerald-50/50 p-3 rounded-xl border border-emerald-100">
-                     <span className="text-sm font-semibold text-slate-700">{item.animal}</span>
-                     <span className="text-emerald-700 font-bold bg-white px-3 py-1 rounded-lg shadow-sm">{item.due}</span>
-                   </div>
-                 ))}
-                 {livestockRes.length === 0 && (
-                   <div className="text-center py-4 bg-slate-50 rounded-xl border border-dashed border-slate-200">
-                     <p className="text-xs text-slate-400 italic font-medium text-black">Below Nisab limit (No Zakat due)</p>
-                   </div>
-                 )}
-               </div>
-               <button onClick={() => setProofData(references.livestock)} className="w-full text-[10px] text-slate-400 underline flex justify-center items-center gap-1 hover:text-emerald-600 transition-colors">
-                 <Info size={12}/> View Livestock Calculation Hadith
-               </button>
-            </div>
-          </section>
-        )}
-      </main>
     </div>
   );
 }
