@@ -26,7 +26,7 @@ export default function ZakatApp() {
   
   // Pass 'vals' as any to match the updated engine signature
   const res = calculateZakat(vals, 'silver');
-  const livestockRes = getLivestockZakat(vals);
+  const livestockRes = getLivestockZakat(vals as any);
   const selectedCurrency = CURRENCIES.find(c => c.code === activeCurrency) || CURRENCIES[0];
 
   const chartData = {
