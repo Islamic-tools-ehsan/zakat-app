@@ -1,21 +1,25 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
-// 1. Export the Metadata object at the top
 export const metadata: Metadata = {
-  title: "Islamic Zakat Calculator",
-  description: "The world's most authentic and beautiful Zakat app.",
+  title: "Islamic Zakat App",
+  description: "Authentic & Precise Zakat Calculation",
   manifest: "/manifest.json",
   appleWebApp: {
-    title: "ZakatApp",
+    capable: true,
     statusBarStyle: "default",
-  },
-  icons: {
-    apple: "/icon-192x192.png",
+    title: "Zakat App",
   },
 };
 
-// 2. Your structural Layout function follows
+export const viewport: Viewport = {
+  themeColor: "#047857",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};
+
 export default function RootLayout({
   children,
 }: {
@@ -24,13 +28,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        {/* You don't need to manually add <title> or <meta> here anymore! 
-            Next.js handles it using the metadata object above. */}
-        <meta name="theme-color" content="#047857" />
+        <link rel="icon" href="/favicon.ico" />
       </head>
-      <body className="antialiased bg-slate-50 text-slate-900">
-        {children}
-      </body>
+      <body>{children}</body>
     </html>
   );
 }
