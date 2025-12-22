@@ -1,4 +1,14 @@
 {
+  "residuary": {
+    "title": "Zakat on Wealth",
+    "verse_en": "And establish prayer and give Zakat and bow with those who bow [in worship and obedience].",
+    "source": "Quran 2:43"
+  },
+  "livestock": {
+    "title": "Zakat on Livestock",
+    "verse_en": "The Prophet (ﷺ) said: There is no charity (Zakat) on less than forty sheep, and for forty to one hundred and twenty sheep, one sheep is due.",
+    "source": "Sahih al-Bukhari 1454"
+  },
   "husband": {
     "share_condition": "1/2 if no children, 1/4 if children",
     "verse_en": "And for you is half of what your wives leave if they have no child. But if they have a child, for you is one fourth.",
@@ -18,10 +28,5 @@
     "share_condition": "1/6 each if deceased has children",
     "verse_en": "And for one's parents, to each of them is a sixth of his estate if he left children.",
     "source": "Quran 4:11"
-  },
-  "residuary": {
-    "share_condition": "Remaining balance to closest male relative",
-    "verse_en": "Give the shares to those who are entitled to them, and what remains should be given to the closest male relative.",
-    "source": "Sahih al-Bukhari 6732"
   }
 }
