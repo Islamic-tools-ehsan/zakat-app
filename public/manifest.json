@@ -1,20 +1,21 @@
 {
   "name": "Islamic Zakat Calculator",
   "short_name": "ZakatApp",
+  "description": "Authentic & Precise Islamic Zakat Calculator",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#047857",
   "icons": [
     {
-      "src": "/icon-192x192.png",
+      "src": "https://cdn-icons-png.flaticon.com/512/1000/1000945.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/icon-512x512.png",
+      "src": "https://cdn-icons-png.flaticon.com/512/1000/1000945.png",
       "sizes": "512x512",
       "type": "image/png"
     }
-  ],
-  "start_url": "/",
-  "display": "standalone",
-  "background_color": "#047857",
-  "theme_color": "#047857"
+  ]
 }
