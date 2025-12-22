@@ -12,6 +12,13 @@ import { Pie } from 'react-chartjs-2';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
+// 1. Added Interface to define what Proof Data looks like
+interface ZakatProof {
+  title: string;
+  verse_en: string;
+  source: string;
+}
+
 export default function ZakatApp() {
   const [vals, setVals] = useState({ 
     cash: 0, gold: 0, silver: 0, stocks: 0, 
@@ -21,7 +28,9 @@ export default function ZakatApp() {
   const [nisabMode, setNisabMode] = useState('silver');
   const [activeLang, setActiveLang] = useState('en');
   const [activeCurrency, setActiveCurrency] = useState('USD');
-  const [proofData, setProofData] = useState(null);
+  
+  // 2. Updated state to accept the Interface or null
+  const [proofData, setProofData] = useState<ZakatProof | null>(null);
   
   const res = calculateZakat(vals, nisabMode);
   const selectedCurrency = CURRENCIES.find(c => c.code === activeCurrency) || CURRENCIES[0];
@@ -39,18 +48,19 @@ export default function ZakatApp() {
   return (
     <div className="max-w-md mx-auto min-h-screen bg-slate-50 shadow-2xl flex flex-col font-sans relative">
       <AnimatePresence>
+        {/* 3. Added a safety check (proofData && ...) to ensure it exists before rendering */}
         {proofData && (
           <motion.div 
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="absolute inset-0 z-50 flex items-center justify-center p-6 bg-black/50 backdrop-blur-sm"
+            className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/50 backdrop-blur-sm"
           >
             <motion.div 
               initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }}
               className="bg-white rounded-3xl p-6 shadow-2xl w-full max-w-sm border-t-4 border-emerald-600"
             >
               <div className="flex justify-between items-start mb-4">
-                <h3 className="text-emerald-800 font-bold text-lg flex items-center gap-2"><Book size={20}/> Evidence</h3>
-                <button onClick={() => setProofData(null)}><X size={20}/></button>
+                <h3 className="text-emerald-800 font-bold text-lg flex items-center gap-2 text-black"><Book size={20}/> Evidence</h3>
+                <button onClick={() => setProofData(null)} className="text-slate-400 hover:text-slate-600"><X size={20}/></button>
               </div>
               <p className="text-slate-700 italic text-sm mb-4">"{proofData.verse_en}"</p>
               <div className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full inline-block">Source: {proofData.source}</div>
@@ -73,7 +83,6 @@ export default function ZakatApp() {
           </div>
         </section>
 
-        {/* ANIMATED RESULTS CARD WITH PIE CHART */}
         <motion.div 
           key={res.total}
           initial={{ y: 20, opacity: 0 }}
@@ -88,7 +97,8 @@ export default function ZakatApp() {
             <p className="text-5xl font-black mt-1">
               {selectedCurrency.symbol}{res.total.toLocaleString(undefined, {minimumFractionDigits: 2})}
             </p>
-            <button onClick={() => setProofData(references.residuary)} className="mt-4 flex items-center gap-1 text-[10px] text-emerald-400 underline">
+            {/* Using a type cast here to ensure the data from the JSON matches the interface */}
+            <button onClick={() => setProofData(references.residuary as ZakatProof)} className="mt-4 flex items-center gap-1 text-[10px] text-emerald-400 underline cursor-pointer">
               <Info size={12}/> Why this amount? View Evidence
             </button>
           </div>
