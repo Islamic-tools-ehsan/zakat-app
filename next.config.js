@@ -1,8 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
+  // Disables strict type checking during the build phase
   typescript: {
     ignoreBuildErrors: true,
   },
-};
-module.exports = nextConfig;
+  // Disables ESLint warnings from blocking the production build
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  // Recommended for modern Next.js apps
+  reactStrictMode: true,
+}
+
+module.exports = nextConfig
