@@ -1,34 +1,33 @@
-export const calculateZakat = (vals: any, nisabMode: string) => {
-  const goldPrice = vals.goldPrice || 70;
-  const silverPrice = vals.silverPrice || 0.9;
+export function calculateZakat(vals: any, nisabMode: string) {
+  const goldValue = (vals.gold || 0) * (vals.goldPrice || 0);
+  const silverValue = (vals.silver || 0) * (vals.silverPrice || 0);
+  const totalWealth = (vals.cash || 0) + goldValue + silverValue + (vals.stocks || 0) + (vals.inventory || 0) - (vals.debts || 0);
   
-  // Calculate total wealth
-  const totalWealth = 
-    (vals.cash || 0) + 
-    ((vals.gold || 0) * goldPrice) + 
-    ((vals.silver || 0) * silverPrice) + 
-    (vals.stocks || 0) + 
-    (vals.inventory || 0) - 
-    (vals.debts || 0);
+  // Silver Nisab is the most authentic default for modern times
+  const nisab = 612.36 * (vals.silverPrice || 0.90); 
+  const isEligible = totalWealth >= nisab;
+  
+  return {
+    total: isEligible ? totalWealth * 0.025 : 0,
+    isEligible,
+    nisabLimit: nisab
+  };
+}
 
-  // Nisab thresholds (Standard: 87.48g Gold / 612.36g Silver)
-  const nisabGold = 87.48 * goldPrice;
-  const nisabSilver = 612.36 * silverPrice;
-  const currentNisab = nisabMode === 'gold' ? nisabGold : nisabSilver;
+export function getLivestockZakat(vals: any) {
+  const due = [];
+  const totalSmall = (vals.sheep || 0) + (vals.goats || 0);
 
-  if (totalWealth >= currentNisab) {
-    return {
-      total: totalWealth * 0.025,
-      isEligible: true,
-      wealth: totalWealth
-    };
+  if (totalSmall >= 40) {
+    if (totalSmall <= 120) due.push({ animal: "Sheep/Goat", due: "1 Sheep" });
+    else if (totalSmall <= 200) due.push({ animal: "Sheep/Goat", due: "2 Sheep" });
+    else due.push({ animal: "Sheep/Goat", due: "3 Sheep" });
   }
 
-  return { total: 0, isEligible: false, wealth: totalWealth };
-};
+  if ((vals.cows || 0) >= 30) {
+    if (vals.cows <= 39) due.push({ animal: "Cow/Buffalo", due: "1 Tabi' (1yr old)" });
+    else due.push({ animal: "Cow/Buffalo", due: "1 Musinnah (2yr old)" });
+  }
 
-export const getLivestockZakat = (count: number) => {
-  if (count < 40) return "No Zakat due";
-  if (count < 121) return "1 Sheep/Goat";
-  return "2 Sheep/Goats";
-};
+  return due;
+}
