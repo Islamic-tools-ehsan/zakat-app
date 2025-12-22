@@ -1,18 +1,16 @@
 "use client";
 import React, { useState } from 'react';
-import { calculateZakat, getLivestockZakat } from '@/lib/zakatEngine';
-import { LANGUAGES, CURRENCIES } from '@/lib/constants';
-import { Download, RotateCcw, Book, Globe, Coins, Info, X } from 'lucide-react';
-import jsPDF from 'jspdf';
+import { calculateZakat } from '@/lib/zakatEngine';
+import { CURRENCIES } from '@/lib/constants';
+import { Book, Info, X } from 'lucide-react';
 import references from '../references.json';
-// ANIMATION & CHART IMPORTS
 import { motion, AnimatePresence } from 'framer-motion';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Pie } from 'react-chartjs-2';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-// 1. Added Interface to define what Proof Data looks like
+// 1. Define the shape of the data
 interface ZakatProof {
   title: string;
   verse_en: string;
@@ -25,17 +23,14 @@ export default function ZakatApp() {
     inventory: 0, debts: 0, goldPrice: 70, 
     silverPrice: 0.90, sheep: 0 
   });
-  const [nisabMode, setNisabMode] = useState('silver');
-  const [activeLang, setActiveLang] = useState('en');
-  const [activeCurrency, setActiveCurrency] = useState('USD');
+  const [activeCurrency] = useState('USD');
   
-  // 2. Updated state to accept the Interface or null
-  const [proofData, setProofData] = useState<ZakatProof | null>(null);
+  // 2. Explicitly tell the state it can hold a ZakatProof object
+  const [proofData, setProofData] = useState<any>(null);
   
-  const res = calculateZakat(vals, nisabMode);
+  const res = calculateZakat(vals, 'silver');
   const selectedCurrency = CURRENCIES.find(c => c.code === activeCurrency) || CURRENCIES[0];
 
-  // Chart Data Calculation
   const chartData = {
     labels: ['Cash', 'Gold', 'Silver', 'Stocks'],
     datasets: [{
@@ -48,7 +43,6 @@ export default function ZakatApp() {
   return (
     <div className="max-w-md mx-auto min-h-screen bg-slate-50 shadow-2xl flex flex-col font-sans relative">
       <AnimatePresence>
-        {/* 3. Added a safety check (proofData && ...) to ensure it exists before rendering */}
         {proofData && (
           <motion.div 
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
@@ -59,11 +53,20 @@ export default function ZakatApp() {
               className="bg-white rounded-3xl p-6 shadow-2xl w-full max-w-sm border-t-4 border-emerald-600"
             >
               <div className="flex justify-between items-start mb-4">
-                <h3 className="text-emerald-800 font-bold text-lg flex items-center gap-2 text-black"><Book size={20}/> Evidence</h3>
-                <button onClick={() => setProofData(null)} className="text-slate-400 hover:text-slate-600"><X size={20}/></button>
+                <h3 className="text-emerald-800 font-bold text-lg flex items-center gap-2 text-black">
+                   <Book size={20}/> Evidence
+                </h3>
+                <button onClick={() => setProofData(null)} className="text-slate-400"><X size={20}/></button>
               </div>
-              <p className="text-slate-700 italic text-sm mb-4">"{proofData.verse_en}"</p>
-              <div className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full inline-block">Source: {proofData.source}</div>
+              
+              {/* FIXED LINE: We use optional chaining (?) to prevent the 'never' error */}
+              <p className="text-slate-700 italic text-sm mb-4">
+                "{proofData?.verse_en || "Loading..."}"
+              </p>
+              
+              <div className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full inline-block">
+                Source: {proofData?.source || "General"}
+              </div>
             </motion.div>
           </motion.div>
         )}
@@ -76,17 +79,16 @@ export default function ZakatApp() {
 
       <main className="p-6 flex-1 space-y-6">
         <section className="space-y-4">
-          <input type="number" placeholder="Cash (Bank + Hand)" className="w-full border-slate-200 border p-3 rounded-xl outline-none text-black" onChange={e => setVals({...vals, cash: +e.target.value})} />
+          <input type="number" placeholder="Cash (Bank + Hand)" className="w-full border-slate-200 border p-3 rounded-xl text-black outline-none" onChange={e => setVals({...vals, cash: +e.target.value})} />
           <div className="grid grid-cols-2 gap-3">
-            <input type="number" placeholder="Gold (Grams)" className="w-full border-slate-200 border p-3 rounded-xl text-black" onChange={e => setVals({...vals, gold: +e.target.value})} />
-            <input type="number" placeholder="Silver (Grams)" className="w-full border-slate-200 border p-3 rounded-xl text-black" onChange={e => setVals({...vals, silver: +e.target.value})} />
+            <input type="number" placeholder="Gold (Grams)" className="w-full border-slate-200 border p-3 rounded-xl text-black outline-none" onChange={e => setVals({...vals, gold: +e.target.value})} />
+            <input type="number" placeholder="Silver (Grams)" className="w-full border-slate-200 border p-3 rounded-xl text-black outline-none" onChange={e => setVals({...vals, silver: +e.target.value})} />
           </div>
         </section>
 
         <motion.div 
           key={res.total}
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
+          initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
           className="bg-emerald-900 text-white p-6 rounded-3xl shadow-xl relative overflow-hidden"
         >
           <div className="flex flex-col items-center">
@@ -97,8 +99,10 @@ export default function ZakatApp() {
             <p className="text-5xl font-black mt-1">
               {selectedCurrency.symbol}{res.total.toLocaleString(undefined, {minimumFractionDigits: 2})}
             </p>
-            {/* Using a type cast here to ensure the data from the JSON matches the interface */}
-            <button onClick={() => setProofData(references.residuary as ZakatProof)} className="mt-4 flex items-center gap-1 text-[10px] text-emerald-400 underline cursor-pointer">
+            <button 
+              onClick={() => setProofData(references.residuary)} 
+              className="mt-4 flex items-center gap-1 text-[10px] text-emerald-400 underline cursor-pointer"
+            >
               <Info size={12}/> Why this amount? View Evidence
             </button>
           </div>
