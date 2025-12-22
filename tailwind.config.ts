@@ -8,7 +8,7 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      // The theme will inherit the Emerald and Slate colors automatically
+      // Custom theme extensions if needed
     },
   },
   plugins: [],
